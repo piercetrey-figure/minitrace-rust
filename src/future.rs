@@ -76,6 +76,7 @@ impl<T: std::future::Future> std::future::Future for InSpan<T> {
     type Output = T::Output;
 
     fn poll(self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Self::Output> {
+        println!("polling\n");
         let this = self.project();
 
         let _guard = this.span.as_ref().map(|s| s.try_enter());
@@ -102,6 +103,7 @@ impl<T: std::future::Future> std::future::Future for InLocalSpan<T> {
     type Output = T::Output;
 
     fn poll(self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Self::Output> {
+        println!("polling2\n");
         let this = self.project();
         let _guard = LocalSpan::enter(this.event);
         this.inner.poll(cx)
